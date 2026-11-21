@@ -9,7 +9,7 @@ from islem import Islem
 from girdi import dosyadan_oku
 from fcfs import fcfs
 from sjf import sjf
-from round_robin import round_robin
+from roundrobin import round_robin
 from multilevel_queue import multilevel_queue
 from performans import performans_hesapla
 from gantt import _ciz

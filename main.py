@@ -2,7 +2,7 @@ from girdi import dosyadan_oku
 from fcfs import fcfs
 from sjf import sjf
 from roundrobin import round_robin
-from multilevelqueue import multilevel_queue
+from multilevel_queue import multilevel_queue
 from performans import performans_hesapla
 from gantt import gantt_hepsi
 
