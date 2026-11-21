@@ -68,7 +68,7 @@ Algoritma                  Bekleme     Dönüş     Cevap     CPU %
 FCFS                          5.67     10.33      5.67     100.0
 SJF                           5.00      9.67      5.00     100.0
 Round Robin (dilim=2)         4.33      9.00      1.00     100.0
-Multilevel Queue              5.00      9.67      5.00     100.0
+Multilevel Queue              3.67      8.33      3.00     100.0
 ```
 
 ## Dosyalar
@@ -80,8 +80,8 @@ Multilevel Queue              5.00      9.67      5.00     100.0
 | `girdi.py` | Girdi dosyasını okuyup işlem nesnelerine çevirir |
 | `fcfs.py` | FCFS algoritması |
 | `sjf.py` | SJF algoritması |
-| `round_robin.py` | Round Robin algoritması |
-| `multilevel_queue.py` | Multilevel Queue algoritması |
+| `roundrobin.py` | Round Robin algoritması |
+| `multilevelqueue.py` | Multilevel Queue algoritması |
 | `performans.py` | Bekleme, dönüş, cevap süresi ve CPU kullanımı hesabı |
 | `gantt.py` | Matplotlib ile Gantt şeması çizimi |
 | `arayuz.py` | Tkinter arayüzü |
