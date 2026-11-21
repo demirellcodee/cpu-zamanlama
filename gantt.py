@@ -1,28 +1,34 @@
-import matplotlib.pyplot as plt  # Grafik çizimi için Matplotlib kütüphanesini ekliyoruz
+import matplotlib.pyplot as plt
 
-def gantt_ciz(sonuc):
-    # 1. Gelen veriden benzersiz işlem isimlerini (P1, P2 vb.) çıkarıyoruz
+def _ciz(eksen, sonuc, baslik):
+    # Her işleme bir satır veriyoruz (P1 -> 0, P2 -> 1 ...)
     adlar = []
     for ad, baslama, bitis in sonuc:
         if ad not in adlar:
-            adlar.append(ad)  # Listede yoksa ekle (çiftlemeyi önle)
-
-    # 2. Grafik penceresini ve koordinat eksenini oluşturuyoruz
-    sekil, eksen = plt.subplots()
-
-    # 3. Her bir işlemi zaman eksenine yatay çubuk (barh) olarak yerleştiriyoruz
+            adlar.append(ad)
     for ad, baslama, bitis in sonuc:
-        satir = adlar.index(ad)  # İşlemin dikeydeki satır indeksini buluyoruz
-        eksen.barh(satir, bitis - baslama, left=baslama)  # Yükseklik, Genişlik (Süre), Başlangıç Saniyesi
+        eksen.barh(adlar.index(ad), bitis - baslama, left=baslama, edgecolor="black")
+    eksen.set_yticks(range(len(adlar)))
+    eksen.set_yticklabels(adlar)
+    eksen.set_xlabel("Zaman (saniye)")
+    eksen.set_title(baslik)
 
-    # 4. Eksen etiketlerini ve başlıkları ayarlıyoruz
-    eksen.set_yticks(range(len(adlar)))  # Y eksenine işlem sayısı kadar çentik koy
-    eksen.set_yticklabels(adlar)         # Çentiklerin yanına işlem isimlerini yaz (P1, P2)
-    eksen.set_xlabel("Zaman (saniye)")   # Yatay eksen ismi
-    eksen.set_title("Gantt Şeması")      # Grafik ana başlığı
-    plt.show()                           # Grafiği ekranda göster
+def gantt_ciz(sonuc, baslik="Gantt Şeması", goster=True):
+    sekil, eksen = plt.subplots()
+    _ciz(eksen, sonuc, baslik)
+    if goster:
+        plt.show()
+    return sekil
 
-# TEST BÖLÜMÜ: Dosyayı doğrudan çalıştırırsak örnek veriyi çizer
+def gantt_hepsi(sonuclar, goster=True):
+    # sonuclar: {"FCFS": [...], "SJF": [...], ...} hepsini alt alta çizer
+    sekil, eksenler = plt.subplots(len(sonuclar), 1, figsize=(8, 2.5 * len(sonuclar)))
+    for eksen, (ad, sonuc) in zip(eksenler, sonuclar.items()):
+        _ciz(eksen, sonuc, ad)
+    sekil.tight_layout()
+    if goster:
+        plt.show()
+    return sekil
 if __name__ == "__main__":
-    ornek_veri = [("P1", 0, 8), ("P2", 8, 12), ("P1", 12, 15)]  # (İşlem Adı, Başlama, Bitiş)
-    gantt_ciz(ornek_veri)
+    ornek = [("P1", 0, 5), ("P2", 5, 9), ("P1", 9, 12)]
+    gantt_ciz(ornek)
