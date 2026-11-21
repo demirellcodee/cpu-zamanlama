@@ -1,21 +1,46 @@
-# round_robin(islemler, kuantum) → Gantt listesi döndürür
-# Her eleman: (işlem_adı, başlangıç_zamanı, bitiş_zamanı)
-def round_robin(islemler, kuantum=3):
-    # 1) İşlemleri varış sırasına göre sırala
-    islemler_sirali = sorted(islemler, key=lambda x: x.varis)
-    # 2) Her işlemin ne kadar CPU süresi kaldığını tut
-    kalan = {i.ad: i.sure for i in islemler_sirali}
-    kuyruk   = []   # Hazır kuyruk (çalışmayı bekleyenler)
-    sonuclar = []   # Gantt chart: [(ad, baslangic, bitis), ...]
-    zaman    = 0    # Şu anki CPU saati
-    index    = 0    # Sıradaki eklenmemiş işlem
-    # 3) Başta zaten gelmiş olan işlemleri kuyruğa ekle
-    while index < len(islemler_sirali) and islemler_sirali[index].varis <= zaman:
-        kuyruk.append(islemler_sirali[index])
-        index += 1
-    # 4) Ana döngü: kuyruk veya bekleyen işlem varken çalış
-    while kuyruk or index < len(islemler_sirali):
-        if not kuyruk:
-            # CPU boş → bir sonraki işlemin gelmesini bekle (zaman atla)
-            zaman = islemler_sirali[index].varis
-            while index < len(islemler_sirali) and islemler_sirali[index].varis <= zaman:
+def round_robin(islemler, dilim):
+    # Her işlemin kalan süresini tutan not defteri: {"P1": 8, "P2": 4, ...}
+    kalan = {}
+    for islem in islemler:
+        kalan[islem.ad] = islem.sure
+
+    # İşlemleri varış zamanına göre sırala (önce gelen başta)
+    gelecekler = sorted(islemler, key=lambda i: i.varis)
+
+    kuyruk = []      # CPU sırası bekleyen işlemler
+    sonuc = []       # (ad, başlama, bitiş) listesi
+    zaman = 0        # saat şu an kaç
+    sira = 0         # gelecekler listesinde sıradaki kişi
+
+    while sira < len(gelecekler) or len(kuyruk) > 0:
+
+        # 1) Zamanı gelmiş işlemleri kuyruğa al
+        while sira < len(gelecekler) and gelecekler[sira].varis <= zaman:
+            kuyruk.append(gelecekler[sira])
+            sira = sira + 1
+
+        # 2) Kuyruk boşsa CPU boş bekler, saati sıradaki işlemin varışına atla
+        if len(kuyruk) == 0:
+            zaman = gelecekler[sira].varis
+            continue
+
+        # 3) Kuyruğun başındaki işlemi al
+        islem = kuyruk.pop(0)
+
+        # 4) En fazla "dilim" kadar çalıştır (işi daha azsa o kadar)
+        calisma = min(dilim, kalan[islem.ad])
+        baslangic = zaman
+        zaman = zaman + calisma
+        kalan[islem.ad] = kalan[islem.ad] - calisma
+        sonuc.append((islem.ad, baslangic, zaman))
+
+        # 5) Çalışırken yeni gelenleri kuyruğa al (önce onlar girer)
+        while sira < len(gelecekler) and gelecekler[sira].varis <= zaman:
+            kuyruk.append(gelecekler[sira])
+            sira = sira + 1
+
+        # 6) İşi bitmediyse sıranın sonuna geç
+        if kalan[islem.ad] > 0:
+            kuyruk.append(islem)
+
+    return sonuc
