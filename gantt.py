@@ -29,6 +29,3 @@ def gantt_hepsi(sonuclar, goster=True):
     if goster:
         plt.show()
     return sekil
-if __name__ == "__main__":
-    ornek = [("P1", 0, 5), ("P2", 5, 9), ("P1", 9, 12)]
-    gantt_ciz(ornek)
